@@ -1,0 +1,97 @@
+% File SDSS2020_SampleExtendedAbstract.tex
+\documentclass[10pt]{article}
+\usepackage{sdss2020} % Uses Times Roman font (either newtx or times package)
+\usepackage{url}
+\usepackage{latexsym}
+\usepackage{amsmath, amsthm, amsfonts}
+\usepackage{algorithm, algorithmic}  
+\usepackage{graphicx}
+\usepackage{cleveref}
+
+\usepackage[dvipsnames]{xcolor} % colors
+\newcommand{\mh}[1]{{\textcolor{blue}{#1}}}
+\newcommand{\svp}[1]{{\textcolor{RedOrange}{#1}}}
+
+%% Author information
+\author{Muxin Hua\\
+  Statistics Department\\ \\ 
+{\tt mhua2@huskers.unl.edu}\\\And Susan Vanderplas\\
+  Statistics Department\\ \\ 
+{\tt susan.vanderplas@unl.edu}\\}
+
+\title{Automatic Acquisition and Identification of Footwear Class
+Characteristics}
+
+\date{}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+The identification of footwear is routinely performed in the field of
+forensic. The common methods of identifying are gathering data with
+surveillance devices and assessing with huge amount of human labor. The
+emergence of convolution network inspires a new approach allows for
+differentiating shoe from background, locating regions of interest, and
+labeling these regions of interest with appropriate features.
+\end{abstract}
+
+
+\section{Introduction}
+% Explain what the real world problem is
+\svp{Forensic investigations frequently turn up shoe prints which are informative but not sufficiently detailed to identify a single individual. The information provided by these prints is known as \emph{class characteristics}: these features may be shared by many shoes of the same make and model, but are useful for narrowing down a subject pool and providing some association between a suspect and the scene.}
+% Figure: examples of class characteristics
+
+% Triangle Circle Star 
+% Include a second set of pictures showing another classification metric (SoleMate) so that we can discuss the differences between the two.
+
+%Explain the connection between the real world problem and our solution
+\svp{When assessing the worth of class characteristic evidence, it is helpful to know more about the distribution of class characteristics in the local population. These characteristics are likely to have high geographic variability (because of weather, population composition, etc.), so this data must be gathered and compared at a local level. Collection and processing of footwear data has historically required large amounts of human labor, which has made collection of the necessary population data infeasible for law enforcement agencies. Our research group has developed a shoe scanner capable of gathering this data automatically, but the data still needs to be processed to identify relevant features. In this paper, we describe a computer vision model which is intended to digest the automatically gathered data into useful, human-friendly labeled class characteristic features. It is our hope that when combined with the development of the shoe scanner, this will facilitate more effective and quantitative use of footwear evidence.}
+% To statistically calculate the random match probability of footwear, we need shoe data from a given population. It has been an impossible task to collect all the shoe data from a population given the data volume and variety. In this research, we adopt a viable solution: collecting data with a scanner and automatically classifying image with transfer learning on Faster Region-based Convolution Neural Network (Faster R-CNN).  
+
+
+\section{Methods}
+
+\subsection{Transfer Learning}
+Transfer Learning is a technique \svp{which} uses weights from pretrained models to solve a new problem. Pretrained \svp{computer vision} models, like Resnet101 \svp{and} VGG-16 \svp{are developed} on massive \svp{amounts of labeled photographic} data\svp{, which allows them to successfully differentiate between a wide variety of naturally occurring objects}. \svp{Many of the feature detectors which allow these networks to function so well are also relevant to the detection of geometric images on shoe soles.} \svp{Leveraging} these models \svp{allows us to make more efficient use of the data we have} while achieving lower error rates. 
+
+\svp{In this paper, we describe the process of implementing single-stage transfer learning for shoe images. While we do have a shoe scanner which is collecting real-world data, we have only been collecting that data for a relatively short period of time, and it has not been manually annotated. For the first stage of this training process, we will use labeled photographs of shoe soles taken from online retailers: this will allow us to focus primarily on the identification of geometric features using human-friendly class labels. While geometric feature identification sounds simple, in practice it is extremely challenging, as discussed in \Cref{sec:classification-scheme}.}
+
+% We start with training shoe sole pictures from Zappos, a shoe retailer website provides clear, nice shoe sole images perfect for training. This process emphasizes the feature detectors that work with shoe tread patterns. To further robust the network, we will train the model on scanner data, which has degradation image quality.  % I wrote the paragraphs above and below this before I got to that paragraph :)  Great minds think alike.
+
+\svp{Once we have a network which emphasizes feature detectors useful for identifying class characteristics in "clean" images, we will conduct a second stage of transfer learning which will allow the model to cope with degraded real-world images, which may be obscured with dirt or have suboptimal lighting.}
+
+
+\subsection{Computer Vision Models}
+% Provide a brief overview of classification vs. identification, the differences between CNN and RCNN models, and why RCNN is ideal for this use case.
+% Show the "what we want" picture with a real shoe print and several bounding boxes labeled.
+
+
+To serve our purpose of identifying features in image, we implement transfer learning on Faster R-CNN to detect shoe tread features. Faster R-CNN has the ability of extracting and identifying features and output a set of interesting regions with labels of classes and corresponding predictive scores.  
+
+
+\subsection{Class Characteristic Labels}\label{sec:classification-scheme}
+\svp{Perceptually, we do not usually have much trouble differentiating between a circle and a square - circles are round, squares have straight lines of equal length that meet in equal angles. This simple observation becomes much more complicated when applied to creating labeling criteria for shoe sole design patterns: not all shoe sole materials accommodate sharp corners, shoes wear down over time, and some shapes are simply ambiguous (see Fig... DC shoes). In addition, while humans can use context to clarify some ambiguous features (such as the difference between a dot on an 'i' and a circle), computer vision models typically do not have this ability. Mitigating this problem requires a combination of careful labeling of training data (to provide information to the computer that is at the level that the models can use) and identification of a sufficiently distinct set of class characteristics to reduce cross-classification errors which stem from the data rather than the model's discriminatory capabilities.}
+
+% Although we have determined the footwear shapes, it’s still difficult to annotate the images. Unlike other image classifications, geometric features of footwear are artificial and difficult to annotate. For example, in this image from a DC shoe, there are repeating patterns of a shape, but this shape doesn’t strictly fall into any of the categories. It’s a mixture of circle, quadrilateral and text of “D” and “C”. Th ambiguity of feature has been a huge challenge in this study. 
+
+DC 
+
+ 
+
+\section{Results}
+
+In this work, we described the process of training and evaluating each stage of the model. We are looking forward to being able to identify the features with the accuracy of “nice” and “scanner” models.  (Maybe show a picture of our prediction if I can complete the code) 
+
+ 
+
+\section{Discussion }
+% Interesting points for discussion - 
+%   - If the model identifies something that is present but wasn't labeled, is that an error?
+%   - Examiners don't care about the model's ability to use context or that it tends to assign multiple labels - they work in a space where there are many different descriptors that sometimes overlap.
+This work provides the ability to study the distribution of class characteristics in footwear. Utilizing the Faster R-CNN and the weights of pretrained models, our task can be implemented efficiently. After training with nice data followed by scanner data, we will have a robust model that is able to identify the footwear features and accuracy.
+
+ 
+
+
+
+\end{document}
