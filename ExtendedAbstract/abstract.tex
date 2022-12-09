@@ -6,22 +6,23 @@
 \usepackage{amsmath, amsthm, amsfonts}
 \usepackage{algorithm, algorithmic}
 \usepackage{graphicx}
-\usepackage{cleveref}
+\usepackage[capitalise]{cleveref}
+\usepackage{caption}
 
 \usepackage[dvipsnames]{xcolor} % colors
 \newcommand{\mh}[1]{{\textcolor{blue}{#1}}}
 \newcommand{\svp}[1]{{\textcolor{RedOrange}{#1}}}
 
-%% Author information
-\author{Muxin Hua\\
-  Statistics Department\\ \\
-{\tt mhua2@huskers.unl.edu}\\\And Susan Vanderplas\\
-  Statistics Department\\ \\
-{\tt susan.vanderplas@unl.edu}\\}
-
+% %% Author information
+% \author{Muxin Hua\\
+%   Statistics Department\\ \\
+% {\tt mhua2@huskers.unl.edu}\\\And Susan Vanderplas\\
+%   Statistics Department\\ \\
+% {\tt susan.vanderplas@unl.edu}\\}
+%
 \title{Automatic Acquisition and Identification of Footwear Class
 Characteristics}
-
+\setlength\titlebox{2.5cm}
 \date{}
 
 \begin{document}
@@ -58,6 +59,8 @@ Collection and processing of footwear data has historically required large amoun
 We have collaborated with engineers to develop a shoe scanner capable of gathering this data automatically, but the data still needs to be processed to identify relevant features.
 % In this research, we adopt a viable solution: collecting data with a scanner and automatically classifying image with transfer learning on Faster Region-based Convolution Neural Network (Faster R-CNN).
 In this paper, we describe a faster, region-based convolutional neural network (R-CNN) \cite{girshickFastRCNN2015} which identifes areas of the shoe sole with relevant class characteristic features and applies human-readable labels to those features.
+Previous approaches to shoeprint classification and retrieval used CNN features directly \cite{zhangAdaptingConvolutionalNeural2017}, but these features are not describable or useable by forensic examiners.
+The additional step of using human-friendly labels introduces additional complexities to the problem of class characteristic identification, but also makes a model which is more useful for the task of assisting forensic examiners with quantifying the significance, weight, and importance of the evidence they present in court.
 We hope that the combination of the scanner and the computer vision model will lay the foundation for more effective and quantitative characterization of the relevance and weight of footwear evidence.}
 
 
@@ -103,32 +106,55 @@ While geometric feature identification sounds simple, in practice it is extremel
 \subsection{Class Characteristic Labels}\label{sec:classification-scheme}
 \svp{
 Perceptually, we do not usually have much trouble differentiating between a circle and a square - circles are round, squares have straight lines of equal length that meet in equal angles.
-This simple observation becomes much more complicated when applied to creating labeling criteria for shoe sole design patterns: not all shoe sole materials accommodate sharp corners, shoes wear down over time, and some shapes are simply ambiguous (see Fig... DC shoes).
+This simple observation becomes much more complicated when applied to creating labeling criteria for shoe sole design patterns: not all shoe sole materials accommodate sharp corners, shoes wear down over time, and some shapes are simply ambiguous, as shown in  \Cref{fig:dc-shoe}.
 In addition, while humans can use context to clarify some ambiguous features (such as the difference between a dot on an 'i' and a circle), computer vision models typically do not have this ability.
+An example of this phenomenon is provided in \Cref{fig:adidas}.
 Mitigating this problem requires a combination of careful labeling of training data (to provide information to the computer that is at the level that the models can use) and identification of a sufficiently distinct set of class characteristics.
 A distinct set of class characteristics is essential to reduce cross-classification errors which stem from the data rather than the model's discriminatory capabilities.
+In this paper, we discuss the impact of different sets of class characteristic labels on R-CNN model performance, and consider what misclassification looks like with contextual information (or lack thereof) for forensic examiners as well as computer vision models.
 }
 
 % Although we have determined the footwear shapes, it’s still difficult to annotate the images. Unlike other image classifications, geometric features of footwear are artificial and difficult to annotate. For example, in this image from a DC shoe, there are repeating patterns of a shape, but this shape doesn’t strictly fall into any of the categories. It’s a mixture of circle, quadrilateral and text of “D” and “C”. Th ambiguity of feature has been a huge challenge in this study.
 
-DC
+\begin{figure}
+\includegraphics[width=\linewidth]{dc_circle_quad.png}
+\caption{Some common shapes on shoe soles blur the lines between two categories. This pattern, which is frequently found on DC shoes, is halfway between a circle and a square, and could reasonably be classified as either shape.}\label{fig:dc-shoe}
+\end{figure}
 
+\begin{minipage}{.4\linewidth}
+\includegraphics[width=\linewidth]{adidas-test.jpg}
+\end{minipage}\hfill\begin{minipage}{.49\linewidth}
+\captionof{figure}{Without context, some shoe features appear to be one category, while a human annotating the full image would label this another category. Here, the inside of the "a" and "d" in Adidas are perfect circ es.\label{fig:adidas}}
+\end{minipage}
 
 
 \section{Results}
-
-In this work, we described the process of training and evaluating each stage of the model. We are looking forward to being able to identify the features with the accuracy of “nice” and “scanner” models.  (Maybe show a picture of our prediction if I can complete the code)
-
+% In this work, we described the process of training and evaluating each stage of the model. We are looking forward to being able to identify the features with the accuracy of “nice” and “scanner” models.  (Maybe show a picture of our prediction if I can complete the code)
+\svp{
+In this paper, we describe the process of fitting a faster R-CNN model to annotated shoe data using geometric descriptors as well as a system for class characteristic labeling used by forensic examiners.
+We assess the difference that the classification scheme makes to the model fitting process as well as numerical measures of the models' utility and how these measures hold up under the unique constraints of labeling footwear tread pattern features.
+We also explore the accuracy of the initial stage of the transfer learning model process when the model is used to directly predict features of images captured from the shoe scanner directly.
+}
 
 
 \section{Discussion }
 % Interesting points for discussion -
 %   - If the model identifies something that is present but wasn't labeled, is that an error?
 %   - Examiners don't care about the model's ability to use context or that it tends to assign multiple labels - they work in a space where there are many different descriptors that sometimes overlap.
-This work provides the ability to study the distribution of class characteristics in footwear. Utilizing the Faster R-CNN and the weights of pretrained models, our task can be implemented efficiently. After training with nice data followed by scanner data, we will have a robust model that is able to identify the footwear features and accuracy.
+This work provides the ability to study the distribution of class characteristics in footwear.
+Utilizing the Faster R-CNN and the weights of pretrained models,
+%our task can be implemented efficiently.
+\svp{we can use a smaller set of labeled data to identify class characteristics using human-friendly labels, leveraging these computer vision models' abilities on a niche set of training labels.}
+
+\svp{One interesting facet of this problem is the effect of contextual information on the labeling process.
+Human examiners often have to work with incomplete prints, which may not have the contextual information useful for differentiating between a circle and the letter 'o'; as a result, while the computer vision models often confuse the two features (which are labeled differently), human examiners would not consider this misclassification to be an error.
+In statistical and machine learning problems, it is less common to have misclassifications which are ambiguously errors (or not).
+We discuss the implications of this problem for interpreting the results of our model and consider how human labels impact the underlying approach to using computer vision techniques in forensics.
+}
 
 
-
+\bibliographystyle{sdss2020} % Please do not change the bibliography style
+\bibliography{references}
 
 
 \end{document}
